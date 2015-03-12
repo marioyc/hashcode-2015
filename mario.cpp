@@ -17,6 +17,7 @@ using namespace std;
 #define MAXC 1000
 #define MAXS 700
 
+int R,C;
 bool used[MAXR][MAXC];
 int z[MAXS],cap[MAXS];
 int ar[MAXS],as[MAXS],ap[MAXS];
@@ -34,32 +35,9 @@ void mark(int r, int c, int sz){
 		used[r][c + i] = true;
 }
 
-int main(){
-	ios::sync_with_stdio(0);
+pair<int, int> orderR[MAXR];
 
-	int R,C,U,P,M;
-
-	cin >> R >> C >> U >> P >> M;
-
-	for(int i = 0,r,c;i < U;++i){
-		cin >> r >> c;
-		used[r][c] = true;
-	}
-
-	memset(ar,-1,sizeof ar);
-	memset(as,-1,sizeof as);
-
-	pair< pair<int, int> , int> order[M];
-
-	for(int i  = 0,r,c;i < M;++i){
-		cin >> z[i] >> cap[i];
-		order[i] = make_pair(make_pair(cap[i],-z[i]),i);
-	}
-
-	sort(order,order + M);
-
-	pair<int, int> orderR[R];
-
+void calc_rows(){
 	for(int i = 0;i < R;++i){
 		int cont = 0;
 
@@ -71,13 +49,40 @@ int main(){
 	}
 
 	sort(orderR,orderR + R);
+}
+
+int main(){
+	ios::sync_with_stdio(0);
+
+	int U,P,M;
+
+	cin >> R >> C >> U >> P >> M;
+
+	for(int i = 0,r,c;i < U;++i){
+		cin >> r >> c;
+		used[r][c] = true;
+	}
+
+	memset(ar,-1,sizeof ar);
+	memset(as,-1,sizeof as);
+
+	pair< double , int> order[M];
+
+	for(int i  = 0,r,c;i < M;++i){
+		cin >> z[i] >> cap[i];
+		order[i] = make_pair((double)cap[i] * cap[i] * cap[i] * cap[i] / z[i],i);
+	}
+
+	sort(order,order + M);
+
+	calc_rows();
 
 	for(int i = 0;i < M;++i){
 		bool found = false;
 		int ind = order[M - 1 - i].second;
 
 		for(int j = 0;j < R && !found;++j){
-			int r = orderR[R - 1 - j].second;
+			int r = (i + j) % R;//orderR[j].second;
 
 			for(int k = 0;k + z[ind] <= C && !found;++k){
 				if(check(r,k,z[ind])){
@@ -88,14 +93,26 @@ int main(){
 				}
 			}
 		}
+
+		//calc_rows();
 	}
+
+	int sum[P];
+	memset(sum,0,sizeof sum);
 
 	for(int i = 0,pos = 0;i < M;++i){
 		int ind = order[M - 1 - i].second;
 
 		if(ar[ind] != -1){
-			ap[ind] = pos;
 			pos = (pos + 1) % P;
+			/*pos = 0;
+
+			for(int j = 1;j < P;++j)
+				if(sum[j] < sum[pos])
+					pos = j;
+			*/
+			ap[ind] = pos;
+			sum[pos] += cap[ind];
 		}
 	}
 
