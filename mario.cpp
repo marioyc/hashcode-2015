@@ -17,7 +17,7 @@ using namespace std;
 #define MAXC 1000
 #define MAXS 700
 
-int R,C;
+int R,C,U,P,M;;
 bool used[MAXR][MAXC];
 int z[MAXS],cap[MAXS];
 int ar[MAXS],as[MAXS],ap[MAXS];
@@ -51,10 +51,36 @@ void calc_rows(){
 	sort(orderR,orderR + R);
 }
 
+int best[MAXS];
+
+int worst_score(){
+	for(int i = 0;i < P;++i){
+		best[i] = -1;
+
+		for(int j = 0;j < R;++j){
+			int sum = 0;
+
+			for(int k = 0;k < M;++k){
+				if(ar[k] != -1 && ar[k] != j && ap[k] == i)
+					sum += cap[k];
+			}
+			//cout << sum << endl;
+			if(best[i] == -1) best[i] = sum;
+			else best[i] = min(best[i],sum);
+		}
+	}
+
+	int pos = 0;
+
+	for(int i = 1;i < P;++i)
+		if(best[i] < best[pos])
+			pos = i;
+
+	return pos;
+}
+
 int main(){
 	ios::sync_with_stdio(0);
-
-	int U,P,M;
 
 	cin >> R >> C >> U >> P >> M;
 
@@ -97,22 +123,26 @@ int main(){
 		//calc_rows();
 	}
 
-	int sum[P];
-	memset(sum,0,sizeof sum);
+	//int sum[P][R];
+	//memset(sum,0,sizeof sum);
 
-	for(int i = 0,pos = 0;i < M;++i){
+	for(int i = 0,pos = 0,done = 0,r;i < M;++i){
 		int ind = order[M - 1 - i].second;
 
 		if(ar[ind] != -1){
-			pos = (pos + 1) % P;
-			/*pos = 0;
+			if(done < 250) pos = (pos + 1) % P,++done;
+			else pos = worst_score();//(pos + 1) % P;
+			/*pos = 0; r = 0;
 
-			for(int j = 1;j < P;++j)
-				if(sum[j] < sum[pos])
-					pos = j;
+			for(int j = 0;j < P;++j)
+				for(int k = 0;k < R;++k)
+					if(sum[j][k] < sum[pos][r]){
+						pos = j;
+						r = k;
+					}
 			*/
 			ap[ind] = pos;
-			sum[pos] += cap[ind];
+			//sum[pos][r] += cap[ind];
 		}
 	}
 
