@@ -89,13 +89,14 @@ int main(){
 
 			for(int k = 0;k < M;++k){
 				if(ar[k] != -1 && ar[k] != j && ap[k] == i)
-					sum += z[k];
+					sum += cap[k];
 			}
 			//cout << sum << endl;
 			if(best == -1) best = sum;
 			else best = min(best,sum);
 		}
 
+		if(best < 10) cout << i << " " << best << endl;
 		if(ans == -1) ans = best;
 		else ans = min(ans,best);
 	}

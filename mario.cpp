@@ -17,6 +17,7 @@ using namespace std;
 #define MAXC 1000
 #define MAXS 700
 
+int R,C,U,P,M;;
 bool used[MAXR][MAXC];
 int z[MAXS],cap[MAXS];
 int ar[MAXS],as[MAXS],ap[MAXS];
@@ -34,32 +35,9 @@ void mark(int r, int c, int sz){
 		used[r][c + i] = true;
 }
 
-int main(){
-	ios::sync_with_stdio(0);
+pair<int, int> orderR[MAXR];
 
-	int R,C,U,P,M;
-
-	cin >> R >> C >> U >> P >> M;
-
-	for(int i = 0,r,c;i < U;++i){
-		cin >> r >> c;
-		used[r][c] = true;
-	}
-
-	memset(ar,-1,sizeof ar);
-	memset(as,-1,sizeof as);
-
-	pair< pair<int, int> , int> order[M];
-
-	for(int i  = 0,r,c;i < M;++i){
-		cin >> z[i] >> cap[i];
-		order[i] = make_pair(make_pair(cap[i],-z[i]),i);
-	}
-
-	sort(order,order + M);
-
-	pair<int, int> orderR[R];
-
+void calc_rows(){
 	for(int i = 0;i < R;++i){
 		int cont = 0;
 
@@ -71,13 +49,82 @@ int main(){
 	}
 
 	sort(orderR,orderR + R);
+}
+
+int best[MAXS];
+
+void score(){
+	for(int i = 0;i < P;++i){
+		best[i] = -1;
+
+		for(int j = 0;j < R;++j){
+			int sum = 0;
+
+			for(int k = 0;k < M;++k){
+				if(ar[k] != -1 && ar[k] != j && ap[k] == i)
+					sum += cap[k];
+			}
+			//cout << sum << endl;
+			if(best[i] == -1) best[i] = sum;
+			else best[i] = min(best[i],sum);
+		}
+	}
+}
+
+int worst_score(){
+	score();
+
+	int pos = 0;
+
+	for(int i = 1;i < P;++i)
+		if(best[i] < best[pos])
+			pos = i;
+
+	return pos;
+}
+
+int best_score(){
+	score();
+
+	int pos = 0;
+
+	for(int i = 1;i < P;++i)
+		if(best[i] > best[pos])
+			pos = i;
+
+	return pos;
+}
+
+int main(){
+	ios::sync_with_stdio(0);
+
+	cin >> R >> C >> U >> P >> M;
+
+	for(int i = 0,r,c;i < U;++i){
+		cin >> r >> c;
+		used[r][c] = true;
+	}
+
+	memset(ar,-1,sizeof ar);
+	memset(as,-1,sizeof as);
+
+	pair< double , int> order[M];
+
+	for(int i  = 0,r,c;i < M;++i){
+		cin >> z[i] >> cap[i];
+		order[i] = make_pair((double)cap[i] * cap[i] * cap[i] * cap[i] / z[i],i);
+	}
+
+	sort(order,order + M);
+
+	calc_rows();
 
 	for(int i = 0;i < M;++i){
 		bool found = false;
 		int ind = order[M - 1 - i].second;
 
 		for(int j = 0;j < R && !found;++j){
-			int r = orderR[R - 1 - j].second;
+			int r = (i + j) % R;//orderR[j].second;
 
 			for(int k = 0;k + z[ind] <= C && !found;++k){
 				if(check(r,k,z[ind])){
@@ -90,13 +137,55 @@ int main(){
 		}
 	}
 
-	for(int i = 0,pos = 0;i < M;++i){
+	// Print total by row
+	/*for(int i = 0;i < R;++i){
+		int sum = 0;
+
+		for(int j = 0;j < M;++j)
+			if(ar[j] == i)
+				sum += cap[j];
+
+		cout << sum << " ";
+	}
+
+	cout << endl;*/
+
+	for(int i = 0,pos = 0,done = 0;i < M;++i){
 		int ind = order[M - 1 - i].second;
 
 		if(ar[ind] != -1){
+			if(done < 250){
+				pos = (pos + 1) % P;
+				++done;
+			}else pos = worst_score();//(pos + 1) % P;
+			/*pos = 0; r = 0;
+
+			for(int j = 0;j < P;++j)
+				for(int k = 0;k < R;++k)
+					if(sum[j][k] < sum[pos][r]){
+						pos = j;
+						r = k;
+					}
+			*/
 			ap[ind] = pos;
-			pos = (pos + 1) % P;
 		}
+	}
+
+	for(int it = 0;it < 1;++it){
+		int x = worst_score(),y = best_score();
+		//cout << x << " " << y << endl;
+
+		int pos = -1;
+
+		for(int i = 0;i < M;++i)
+			if(ap[i] == y && (pos == -1 || cap[pos] > cap[i])){
+				pos = i;
+				//ap[i] = x;
+				//break;
+			}
+
+		if(pos != -1)
+			ap[pos] = x;
 	}
 
 	for(int i = 0;i < M;++i){
