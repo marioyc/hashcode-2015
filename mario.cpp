@@ -16,6 +16,7 @@ using namespace std;
 #define MAXR 1000
 #define MAXC 1000
 #define MAXS 700
+#define MAXP 45
 
 int R,C,U,P,M;;
 bool used[MAXR][MAXC];
@@ -108,11 +109,11 @@ int main(){
 	memset(ar,-1,sizeof ar);
 	memset(as,-1,sizeof as);
 
-	pair< double , int> order[M];
+	pair< double , int> order[MAXS];
 
 	for(int i  = 0,r,c;i < M;++i){
 		cin >> z[i] >> cap[i];
-		order[i] = make_pair((double)cap[i] * cap[i] * cap[i] * cap[i] / z[i],i);
+		order[i] = make_pair((double)cap[i] * cap[i] * cap[i] * cap[i] / (z[i] * z[i] * z[i]) ,i);
 	}
 
 	sort(order,order + M);
@@ -150,6 +151,8 @@ int main(){
 
 	cout << endl;*/
 
+	int sum[MAXP][MAXR];
+
 	for(int i = 0,pos = 0,done = 0;i < M;++i){
 		int ind = order[M - 1 - i].second;
 
@@ -168,6 +171,7 @@ int main(){
 					}
 			*/
 			ap[ind] = pos;
+			sum[pos][ ar[ind] ] += cap[ind];
 		}
 	}
 
