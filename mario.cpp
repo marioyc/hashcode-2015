@@ -54,7 +54,7 @@ void calc_rows(){
 
 int best[MAXS];
 
-void score(){
+int score(){
 	for(int i = 0;i < P;++i){
 		best[i] = -1;
 
@@ -70,6 +70,13 @@ void score(){
 			else best[i] = min(best[i],sum);
 		}
 	}
+
+	int ans = best[0];
+
+	for(int i = 0;i < P;++i)
+		ans = min(ans,best[i]);
+
+	return ans;
 }
 
 int worst_score(){
@@ -152,6 +159,9 @@ int main(){
 	cout << endl;*/
 
 	int sum[MAXP][MAXR];
+	//bool assigned[MAXS];
+
+	//memset(assigned,false,sizeof assigned);
 
 	for(int i = 0,pos = 0,done = 0;i < M;++i){
 		int ind = order[M - 1 - i].second;
@@ -170,26 +180,51 @@ int main(){
 						r = k;
 					}
 			*/
+			/*int ind = -1;
+
+			for(int j = 0;j < M;++j)
+				if(ar[j] != -1 && !assigned[j] && (ind == -1 || sum[pos][ ar[j] ] < sum[pos][ ar[ind] ]))
+					ind = j;*/
+
+			//cout << ind << endl;
+			//if(ind == -1) break;
+			//assigned[ind] = true;
 			ap[ind] = pos;
 			sum[pos][ ar[ind] ] += cap[ind];
 		}
 	}
 
-	for(int it = 0;it < 1;++it){
-		int x = worst_score(),y = best_score();
-		//cout << x << " " << y << endl;
+	for(int it = 0;it < 50;++it){
+		int cur = score();
 
-		int pos = -1;
+		/*for(int i = 0;i < P;++i)
+			cout << best[i] << " ";
+		cout << endl;*/
 
-		for(int i = 0;i < M;++i)
-			if(ap[i] == y && (pos == -1 || cap[pos] > cap[i])){
-				pos = i;
-				//ap[i] = x;
-				//break;
+		int x = worst_score();
+		//cout << "x = " << x << endl;
+
+		for(int y = 0;y < P;++y){
+			int pos = -1;
+
+			for(int i = 0;i < M;++i)
+				if(ap[i] == y && (pos == -1 || cap[pos] > cap[i]))
+					pos = i;
+
+			if(pos != -1){
+				ap[pos] = x;
+			
+				int now = score();
+
+				if(best[x] > cur && best[y] > cur){					
+					//cout << y << " " << now << endl;
+					break;
+				}else
+					ap[pos] = y;
 			}
+		}
 
-		if(pos != -1)
-			ap[pos] = x;
+		//cout << score() << endl;
 	}
 
 	for(int i = 0;i < M;++i){
