@@ -89,7 +89,7 @@ int main(){
 
 			for(int k = 0;k < M;++k){
 				if(ar[k] != -1 && ar[k] != j && ap[k] == i)
-					sum += z[k];
+					sum += cap[k];
 			}
 			//cout << sum << endl;
 			if(best == -1) best = sum;
