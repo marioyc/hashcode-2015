@@ -119,12 +119,20 @@ int main(){
 				}
 			}
 		}
-
-		//calc_rows();
 	}
 
-	//int sum[P][R];
-	//memset(sum,0,sizeof sum);
+	// Print total by row
+	/*for(int i = 0;i < R;++i){
+		int sum = 0;
+
+		for(int j = 0;j < M;++j)
+			if(ar[j] == i)
+				sum += cap[j];
+
+		cout << sum << " ";
+	}
+
+	cout << endl;*/
 
 	for(int i = 0,pos = 0,done = 0,r;i < M;++i){
 		int ind = order[M - 1 - i].second;
@@ -142,7 +150,6 @@ int main(){
 					}
 			*/
 			ap[ind] = pos;
-			//sum[pos][r] += cap[ind];
 		}
 	}
 
