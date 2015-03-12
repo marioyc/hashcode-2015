@@ -53,7 +53,7 @@ void calc_rows(){
 
 int best[MAXS];
 
-int worst_score(){
+void score(){
 	for(int i = 0;i < P;++i){
 		best[i] = -1;
 
@@ -69,11 +69,27 @@ int worst_score(){
 			else best[i] = min(best[i],sum);
 		}
 	}
+}
+
+int worst_score(){
+	score();
 
 	int pos = 0;
 
 	for(int i = 1;i < P;++i)
 		if(best[i] < best[pos])
+			pos = i;
+
+	return pos;
+}
+
+int best_score(){
+	score();
+
+	int pos = 0;
+
+	for(int i = 1;i < P;++i)
+		if(best[i] > best[pos])
 			pos = i;
 
 	return pos;
@@ -134,12 +150,14 @@ int main(){
 
 	cout << endl;*/
 
-	for(int i = 0,pos = 0,done = 0,r;i < M;++i){
+	for(int i = 0,pos = 0,done = 0;i < M;++i){
 		int ind = order[M - 1 - i].second;
 
 		if(ar[ind] != -1){
-			if(done < 250) pos = (pos + 1) % P,++done;
-			else pos = worst_score();//(pos + 1) % P;
+			if(done < 250){
+				pos = (pos + 1) % P;
+				++done;
+			}else pos = worst_score();//(pos + 1) % P;
 			/*pos = 0; r = 0;
 
 			for(int j = 0;j < P;++j)
@@ -151,6 +169,23 @@ int main(){
 			*/
 			ap[ind] = pos;
 		}
+	}
+
+	for(int it = 0;it < 1;++it){
+		int x = worst_score(),y = best_score();
+		//cout << x << " " << y << endl;
+
+		int pos = -1;
+
+		for(int i = 0;i < M;++i)
+			if(ap[i] == y && (pos == -1 || cap[pos] > cap[i])){
+				pos = i;
+				//ap[i] = x;
+				//break;
+			}
+
+		if(pos != -1)
+			ap[pos] = x;
 	}
 
 	for(int i = 0;i < M;++i){
