@@ -96,6 +96,7 @@ int main(){
 			else best = min(best,sum);
 		}
 
+		if(best < 10) cout << i << " " << best << endl;
 		if(ans == -1) ans = best;
 		else ans = min(ans,best);
 	}
