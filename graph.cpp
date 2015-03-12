@@ -92,8 +92,10 @@ struct server {
 
 bool operator<(server A, server B) {
 	int v1, v2;
-	v1 = A.tam * 100 + A.cap;
-	v2 = B.tam * 100 + B.cap;
+//	v1 = A.tam * 100 + A.cap;
+//	v2 = B.tam * 100 + B.cap;
+	v1 = A.cap / (double) A.tam;
+	v2 = B.cap / (double) B.tam;
 	return v1 > v2;
 }
 
@@ -110,6 +112,7 @@ struct answer {
 int A[16][100];
 
 int main(){
+	srand(time(0));
 	int r,s,u,p,m;
 	cin >> r >> s >> u >> p >> m;
 	f(t,0,u) {
@@ -156,10 +159,16 @@ int main(){
 
 
 		f(i,0,p) if(valid[i]) {
-			int tmp = pl[i].value();
+			int tmp = pl[i].capacity();
 			if (mincap > tmp) mincap = tmp, who = i;
 		}
 		if (mincap == oo) continue;
+
+		vint W;
+		f(i,0,p) if(valid[i]) {
+			if (pl[i].capacity() == mincap) W.pb(i);
+		}
+		who = W[rand() % W.size()];
 		
 
 //		debug(t);
@@ -181,11 +190,14 @@ int main(){
 		*/
 
 	}
+	int res = oo;
 	f(i,0,p) {
 		f(j,0,16) cout << pl[i].val[j] << " "; cout << " " << pl[i].capacity() << endl;
+		mini(res, pl[i].capacity());
 	}
 
 
+	cout << res << endl;
 	cout << "here" << endl;
 	f(t,0,m) {
 		ans[t].print();
