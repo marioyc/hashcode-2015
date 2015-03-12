@@ -49,26 +49,36 @@ int main(){
 	memset(ar,-1,sizeof ar);
 	memset(as,-1,sizeof as);
 
+	pair<int, int> order[M];
+
 	for(int i  = 0,r,c;i < M;++i){
 		cin >> z[i] >> cap[i];
+		order[i] = make_pair(cap[i],i);
+	}
 
+	sort(order,order + M);
+
+	for(int i = 0;i < M;++i){
 		bool found = false;
+		int ind = order[M - 1 - i].second;
 
 		for(int j = 0;j < R && !found;++j){
-			for(int k = 0;k + z[i] <= C && !found;++k){
-				if(check(j,k,z[i])){
-					ar[i] = j;
-					as[i] = k;
+			for(int k = 0;k + z[ind] <= C && !found;++k){
+				if(check(j,k,z[ind])){
+					ar[ind] = j;
+					as[ind] = k;
 					found = true;
-					mark(j,k,z[i]);
+					mark(j,k,z[ind]);
 				}
 			}
 		}
 	}
 
 	for(int i = 0,pos = 0;i < M;++i){
-		if(ar[i] != -1){
-			ap[i] = pos;
+		int ind = order[M - 1 - i].second;
+
+		if(ar[ind] != -1){
+			ap[ind] = pos;
 			pos = (pos + 1) % P;
 		}
 	}
