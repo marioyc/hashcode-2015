@@ -194,7 +194,9 @@ int main(){
 		}
 	}
 
-	for(int it = 0;it < 50;++it){
+	bool found = true;
+
+	for(int it = 0;it < 100 && found;++it){
 		int cur = score();
 
 		/*for(int i = 0;i < P;++i)
@@ -202,9 +204,10 @@ int main(){
 		cout << endl;*/
 
 		int x = worst_score();
+		found = false;
 		//cout << "x = " << x << endl;
 
-		for(int y = 0;y < P;++y){
+		for(int y = 0;y < P && !found;++y){
 			int pos = -1;
 
 			for(int i = 0;i < M;++i)
@@ -218,13 +221,12 @@ int main(){
 
 				if(best[x] > cur && best[y] > cur){					
 					//cout << y << " " << now << endl;
-					break;
-				}else
+					found = true;
+				}else{
 					ap[pos] = y;
+				}
 			}
 		}
-
-		//cout << score() << endl;
 	}
 
 	for(int i = 0;i < M;++i){
